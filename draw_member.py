@@ -45,7 +45,13 @@ def draw():
         'SELECT name, group_name FROM members WHERE id = ?',
         (lucky_member_id, )
     ).fetchone()
-    return '<p>%s（團體：%s）</p>' % (member_name, member_group_name)
+
+    # Render template
+    return render_template(
+        'draw.html',
+        name=member_name,
+        group=member_group_name,
+    )
 
 
 # SQLite3-related operations
