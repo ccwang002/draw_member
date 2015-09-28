@@ -7,6 +7,15 @@
   </head>
   <body>
     <h1>來抽出快樂的夥伴吧！</h1>
+    <p>選擇要被抽的團體</p>
+    <form action="/draw" method="post">
+      <label for="group_name">團隊名稱：</label>
+      <input type="radio" name="group_name" value="μ's">μ's
+      <input type="radio" name="group_name" value="K-ON!">K-ON!
+      <input type="radio" name="group_name" value="ALL" checked>（全）
+      <input type="submit" value="Submit">
+    </form>
+    <hr>
     <h3>功能列</h3>
     <ul>
       <li>首頁（抽籤）</li>

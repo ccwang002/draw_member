@@ -1,6 +1,7 @@
 import csv
+import random
 import sqlite3
-from flask import Flask, g, render_template
+from flask import Flask, g, render_template, request
 
 app = Flask(__name__)
 SQLITE_DB_PATH = 'members.db'
@@ -11,6 +12,40 @@ MEMBER_CSV_PATH = 'members.csv'
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/draw', methods=['POST'])
+def draw():
+    # Get the database connection
+    db = get_db()
+
+    # Draw member ids from given group
+    # If ALL is given then draw from all members
+    group_name = request.form.get('group_name', 'ALL')
+    valid_members_sql = 'SELECT id FROM members '
+    if group_name == 'ALL':
+        cursor = db.execute(valid_members_sql)
+    else:
+        valid_members_sql += 'WHERE group_name = ?'
+        cursor = db.execute(valid_members_sql, (group_name, ))
+    valid_member_ids = [
+        row[0] for row in cursor
+    ]
+
+    # If no valid members return 404 (unlikely)
+    if not valid_member_ids:
+        err_msg = "<p>No member in group '%s'</p>" % group_name
+        return err_msg, 404
+
+    # Randomly choice a member
+    lucky_member_id = random.choice(valid_member_ids)
+
+    # Obtain the lucy member's information
+    member_name, member_group_name = db.execute(
+        'SELECT name, group_name FROM members WHERE id = ?',
+        (lucky_member_id, )
+    ).fetchone()
+    return '<p>%s（團體：%s）</p>' % (member_name, member_group_name)
 
 
 # SQLite3-related operations
