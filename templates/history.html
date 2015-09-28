@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}抽籤歷史{% endblock title %}
+
+{% block content %}
+<h1>抽籤歷史（最近 10 筆）</h1>
+<table>
+  <thead>
+    <tr>
+      <th>名字</th>
+      <th>團體</th>
+      <th>抽中時間</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for history in recent_histories %}
+    <tr>
+      <td>{{ history.name }}</td>
+      <td>{{ history.group }}</td>
+      <td>{{ history.draw_time.strftime("%Y 年 %m 月 %d 日 %H 時 %M 分") }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

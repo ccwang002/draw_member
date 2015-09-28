@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 import random
 import sqlite3
 from flask import Flask, g, render_template, request
@@ -46,12 +47,37 @@ def draw():
         (lucky_member_id, )
     ).fetchone()
 
+    # Update draw history
+    with db:
+        db.execute('INSERT INTO draw_histories (memberid) VALUES (?)',
+                   (lucky_member_id, ))
+
     # Render template
     return render_template(
         'draw.html',
         name=member_name,
         group=member_group_name,
     )
+
+
+@app.route('/history')
+def history():
+    db = get_db()
+    c = db.execute(
+        'SELECT m.name, m.group_name, d.time AS "draw_time [timestamp]"'
+        'FROM draw_histories AS d, members as m '
+        'WHERE m.id == d.memberid '
+        'ORDER BY d.time DESC '
+        'LIMIT 10'
+    )
+    recent_histories = []
+    for row in c:
+        recent_histories.append({
+            'name': row[0],
+            'group': row[1],
+            'draw_time': datetime.strptime(row[2], '%Y-%m-%d %H:%M:%S'),
+        })
+    return render_template('history.html', recent_histories=recent_histories)
 
 
 # SQLite3-related operations
