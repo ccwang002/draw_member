@@ -84,7 +84,7 @@ def history():
 # See SQLite3 usage pattern from Flask official doc
 # http://flask.pocoo.org/docs/0.10/patterns/sqlite3/
 def get_db():
-    '''Get the SQLite database connection.
+    """Get the SQLite database connection.
 
     If called outside Flask, e.g. Python shell,
     one should wrap it with app.app_context()::
@@ -96,11 +96,11 @@ def get_db():
                 print(row)
 
     Use the return value out of app_context() will raise
-    sqlite3.ProgrammingError because the database connection
+    `sqlite3.ProgrammingError` because the database connection
     is closed::
 
         db.execute('...')
-    '''
+    """
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(SQLITE_DB_PATH)
@@ -128,7 +128,7 @@ def reset_db():
             (row['名字'], row['團體'])
             for row in csv_reader
         ]
-    # Write members into databse
+    # Write members into database
     with db:
         db.executemany(
             'INSERT INTO members (name, group_name) VALUES (?, ?)',
